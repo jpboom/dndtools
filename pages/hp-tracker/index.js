@@ -14,7 +14,6 @@ export default function Home() {
         message: '',
     });
     const [hpInput, setHpInput] = useState('');
-    let modal = null;
 
     function openModal (type) {
         let title;
@@ -88,6 +87,7 @@ export default function Home() {
         closeModal();
     }
 
+    let modal = null;
     if (modalSettings.show) {
         modal = (
             <div className="fixed w-full h-full top-0 left-0 flex items-center justify-center">
@@ -122,6 +122,33 @@ export default function Home() {
         );
     }
 
+    let hpBlock = (
+        <>
+            <p className="text-6xl text-center">-</p>
+            <p className="text-center">Set Max HP to get started</p>
+        </>
+    );
+    if (maxHp > 0) {
+        let hpPercentage = Math.floor((currentHp / maxHp) * 100);
+        let hpColor = 'red-500';
+        console.log('hpPercentage = ', hpPercentage);
+        if (hpPercentage >= 75) {
+            hpColor = 'green-500';
+        } else if (hpPercentage >= 50) {
+            hpColor = 'yellow-500';
+        } else if (hpPercentage >= 25) {
+            hpColor = 'orange-500';
+        }
+        let hpClasses = `text-6xl text-center text-${hpColor}`;
+        hpBlock = (
+            <>
+                {tempHp > 0 ? <p className="text text-center">Temp HP: {tempHp}</p> : null}
+                <p className={hpClasses}>{currentHp}</p>
+                <p className="text-center">Max HP: {maxHp}</p>
+            </>
+        );
+    }
+
     return (
         <React.Fragment>
             {modal}
@@ -142,9 +169,7 @@ export default function Home() {
                         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                         Set Max HP
                     </button>
-                    {tempHp > 0 ? <p className="text text-center">Temp HP: {tempHp}</p> : null}
-                    <p className="text-6xl text-center">{currentHp}</p>
-                    <p className="text-center">Max HP: {maxHp}</p>
+                    {hpBlock}
                     <button
                         onClick={() => openModal('heal')}
                         className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
