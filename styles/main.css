@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+
+body {
+  @apply p-4 bg-gray-300;
+}
+
+@screen sm {
+    body {
+        @apply p-8;
+    }
+}
+
+@screen md {
+    body {
+        @apply p-12;
+    }
+}
+
+@screen lg {
+    body {
+        @apply p-16;
+    }
+}
+
+@tailwind utilities;
