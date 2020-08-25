@@ -6,15 +6,38 @@ import React, { useState, Fragment } from 'react';
 export default function Home() {
     const [maxHp, setMaxHp] = useState(0);
     const [currentHp, setCurrentHp] = useState(0);
+    const [tempHp, setTempHp] = useState(0);
     const [modalSettings, setModalSettings] = useState({
         show: false,
-        type: 'set',
+        type: '',
+        title: '',
+        message: '',
     });
     const [hpInput, setHpInput] = useState('');
     let modal = null;
 
+    function openModal (type) {
+        let title;
+        let message;
+        if (type === 'set') {
+            title = 'Set character HP';
+            message = 'Enter your maximum HP';
+        } else if (type === 'heal') {
+            title = 'Healing';
+            message = 'Enter the amount of HP to heal';
+        } else if (type === 'damage') {
+            title = 'Damage';
+            message = 'Enter the amount of damage to take';
+        } else if (type === 'temp') {
+            title = 'Temporary HP';
+            message = 'Enter the amount of temp HP you have gained';
+        }
+        setModalSettings({show:true,type:type,title:title,message:message});
+        setModalSettings({show:true,type:type,title:title,message:message});
+    }
+
     function closeModal () {
-        setModalSettings({show:false,type:'set'});
+        setModalSettings({show:false,type:'set',title:'',message:''});
         setHpInput('');
     }
 
@@ -27,6 +50,7 @@ export default function Home() {
 
     function updateHpTotal () {
         let newHp = 0;
+        let newTempHp = 0;
         if (modalSettings.type === 'set') {
             setMaxHp(hpInput);
             setCurrentHp(hpInput);
@@ -37,11 +61,29 @@ export default function Home() {
             }
             setCurrentHp(newHp);
         } else if (modalSettings.type === 'damage') {
-            newHp = Number.parseInt(currentHp) - Number.parseInt(hpInput);
+            if (tempHp > 0) {
+                newTempHp = Number.parseInt(tempHp) - Number.parseInt(hpInput);
+                if (newTempHp < 0) {
+                    newTempHp = 0;
+                }
+                if (tempHp < hpInput) {
+                    newHp = Number.parseInt(currentHp) - (Number.parseInt(hpInput) - tempHp);
+                } else {
+                    newHp = Number.parseInt(currentHp) - Number.parseInt(hpInput);
+                }
+            } else {
+                newHp = Number.parseInt(currentHp) - Number.parseInt(hpInput);
+            }
             if (newHp < 0) {
                 newHp = 0;
             }
+            setTempHp(newTempHp);
             setCurrentHp(newHp);
+        } else if (modalSettings.type === 'temp') {
+            newHp = Number.parseInt(hpInput);
+            if (newHp > tempHp) {
+                setTempHp(newHp);
+            }
         }
         closeModal();
     }
@@ -53,9 +95,9 @@ export default function Home() {
                 <div className="modal-container bg-white w-11/12 md:max-w-md mx-auto rounded shadow-lg z-50 overflow-y-auto">
                     <div className="modal-content py-4 text-left px-6">
                         <div className="flex justify-between items-center pb-3">
-                            <p className="text-2xl font-bold">Simple Modal!</p>
+                            <p className="text-2xl font-bold">{modalSettings.title}</p>
                         </div>
-                        <p>Enter amount of HP to {modalSettings.type}</p>
+                        <p>{modalSettings.message}</p>
                         <input
                             autoFocus
                             onChange={() => onHpInputChange()}
@@ -96,21 +138,27 @@ export default function Home() {
 
                 <section className="p-4 shadow rounded bg-white">
                     <button
-                        onClick={() => setModalSettings({show:true,type:'set'})}
+                        onClick={() => openModal('set')}
                         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                         Set Max HP
                     </button>
+                    {tempHp > 0 ? <p className="text text-center">Temp HP: {tempHp}</p> : null}
                     <p className="text-6xl text-center">{currentHp}</p>
                     <p className="text-center">Max HP: {maxHp}</p>
                     <button
-                        onClick={() => setModalSettings({show:true,type:'heal'})}
+                        onClick={() => openModal('heal')}
                         className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
                         Heal
                     </button>
                     <button
-                        onClick={() => setModalSettings({show:true,type:'damage'})}
+                        onClick={() => openModal('damage')}
                         className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
                         Damage
+                    </button>
+                    <button
+                        onClick={() => openModal('temp')}
+                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                        Temp HP
                     </button>
                 </section>
             </div>
