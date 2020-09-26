@@ -64,11 +64,9 @@ export default function Home() {
                 newTempHp = Number.parseInt(tempHp) - Number.parseInt(hpInput);
                 if (newTempHp < 0) {
                     newTempHp = 0;
-                }
-                if (tempHp < hpInput) {
-                    newHp = Number.parseInt(currentHp) - (Number.parseInt(hpInput) - tempHp);
+                    newHp = Number.parseInt(currentHp) + Number.parseInt(tempHp) - Number.parseInt(hpInput);
                 } else {
-                    newHp = Number.parseInt(currentHp) - Number.parseInt(hpInput);
+                    newHp = Number.parseInt(currentHp);
                 }
             } else {
                 newHp = Number.parseInt(currentHp) - Number.parseInt(hpInput);
