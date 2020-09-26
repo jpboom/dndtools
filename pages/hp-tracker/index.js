@@ -1,6 +1,7 @@
 import Head from 'next/head';
 import Link from 'next/link';
 import React, { useState, Fragment } from 'react';
+import Modal from '../../components/modal';
 
 
 export default function Home() {
@@ -42,6 +43,8 @@ export default function Home() {
 
     function onHpInputChange () {
         const newInput = event.target.value;
+        console.log('newInput = ', newInput);
+        console.log('newInput.match(/^(\d*)$/g) = ', newInput.match(/^(\d*)$/g));
         if (newInput.match(/^(\d*)$/g)) {
             setHpInput(newInput);
         }
@@ -85,41 +88,6 @@ export default function Home() {
         closeModal();
     }
 
-    let modal = null;
-    if (modalSettings.show) {
-        modal = (
-            <div className="fixed w-full h-full top-0 left-0 flex items-center justify-center">
-                <div className="modal-overlay absolute w-full h-full bg-gray-900 opacity-50"></div>
-                <div className="modal-container bg-white w-11/12 md:max-w-md mx-auto rounded shadow-lg z-50 overflow-y-auto">
-                    <div className="modal-content py-4 text-left px-6">
-                        <div className="flex justify-between items-center pb-3">
-                            <p className="text-2xl font-bold">{modalSettings.title}</p>
-                        </div>
-                        <p>{modalSettings.message}</p>
-                        <input
-                            autoFocus
-                            onChange={() => onHpInputChange()}
-                            value={hpInput}
-                            className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                            type="text" />
-                        <div className="flex justify-end pt-2">
-                            <button
-                                onClick={() => closeModal()}
-                                className="cursor-pointer px-4 bg-transparent p-3 rounded-lg text-indigo-500 hover:bg-gray-100 hover:text-indigo-400 mr-2">
-                                Cancel
-                            </button>
-                            <button
-                                onClick={() => updateHpTotal()}
-                                className="cursor-pointer modal-close px-4 bg-indigo-500 p-3 rounded-lg text-white hover:bg-indigo-400">
-                                Apply
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
     let hpBlock = (
         <>
             <p className="text-6xl text-center">-</p>
@@ -129,7 +97,6 @@ export default function Home() {
     if (maxHp > 0) {
         let hpPercentage = Math.floor((currentHp / maxHp) * 100);
         let hpColor = 'red-500';
-        console.log('hpPercentage = ', hpPercentage);
         if (hpPercentage >= 75) {
             hpColor = 'green-500';
         } else if (hpPercentage >= 50) {
@@ -149,7 +116,32 @@ export default function Home() {
 
     return (
         <React.Fragment>
-            {modal}
+            <Modal
+                show={modalSettings.show}
+                onClose={closeModal}>
+                <div className="flex justify-between items-center pb-3">
+                    <p className="text-2xl font-bold">{modalSettings.title}</p>
+                </div>
+                <p>{modalSettings.message}</p>
+                <input
+                    autoFocus
+                    onChange={() => onHpInputChange()}
+                    value={hpInput}
+                    className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                    type="tel" />
+                <div className="flex justify-end pt-2">
+                    <button
+                        onClick={() => closeModal()}
+                        className="cursor-pointer px-4 bg-transparent p-3 rounded-lg text-indigo-500 hover:bg-gray-100 hover:text-indigo-400 mr-2">
+                        Cancel
+                    </button>
+                    <button
+                        onClick={() => updateHpTotal()}
+                        className="cursor-pointer modal-close px-4 bg-indigo-500 p-3 rounded-lg text-white hover:bg-indigo-400">
+                        Apply
+                    </button>
+                </div>
+            </Modal>
             <div className="p-2 shadow rounded bg-teal-900">
                 <Head>
                     <title>D&amp;D Tools</title>
